@@ -17,5 +17,3 @@ Thread.new do
     raise e
   end
 end
-
-run SlackMathbot::Web
