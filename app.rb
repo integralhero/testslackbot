@@ -1,4 +1,5 @@
-require 'Sinatra'
+require 'rubygems'
+require 'sinatra'
 
 get '/test' do
 	"Hello World"
