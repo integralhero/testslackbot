@@ -1,2 +1,2 @@
-require './app'
+require './loraxbox'
 run Sinatra::Application
