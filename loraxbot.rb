@@ -13,7 +13,8 @@ end
 
 def get_user_session(id)
 	puts "Received #{id}"
-	return "#{id.to_s} #{Time.now.strftime('%m/%d/%Y)'}"
+	date = Time.now.strftime("%m/%d/%Y")
+	return "#{id.to_s} #{date}"
 end
 
 client = Slack::RealTime::Client.new
