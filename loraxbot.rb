@@ -18,7 +18,8 @@ client.on :message do |data|
 	return if data['user'] == CHIMEBOT_ID
 	session_id = get_user_session(data['user'])
 	puts data.text
-	response = HTTParty.post('https://api.wit.ai/converse?', :query => {:session_id => "#{session_id}", :q =>"#{data.text}"}, :header => {"Authorization" => "Bearer #{ENV['WIT_API_WOKEN']}"})
+	timenow = Time.now.strftime("%Y%m%d")
+	response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => "#{session_id}", :q =>"#{data.text}"}, :headers => {"Authorization" => "#{ENV['WIT_API_WOKEN']}"})
 	client.message channel: data['channel'], text: "#{response.to_s}"
 	client.message channel: data['channel'], text: "Hi <@#{data['user']}>! You said: #{data.text}"
 end
