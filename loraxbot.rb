@@ -8,7 +8,7 @@ actions = {
     	puts("sending... #{response['text']}")
   	}
 }
-puts "got wit token #{ENV['WIT_API_TOKEN']}"
+
 wit_client = Wit.new(access_token: ENV['WIT_API_TOKEN'], actions: actions)
 
 Slack.configure do |config|
@@ -26,6 +26,7 @@ client.on :message do |data|
 	return if data['user'] == CHIMEBOT_ID
 	session_id = get_user_session(data['user'])
 	rsp = wit_client.converse(session_id, 'what is the weather in London?', {})
+	puts data.inspect
 	puts("Yay, got Wit.ai response: #{rsp}")
 	client.message channel: data['channel'], text: "Hi <@#{data['user']}>!"
 end
