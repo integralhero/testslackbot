@@ -1,4 +1,7 @@
 require 'slack-ruby-bot'
+require 'logger'
+
+logger = Logger.new(STDOUT)
 
 class LoraxBot < SlackRubyBot::Bot
 
@@ -7,7 +10,7 @@ class LoraxBot < SlackRubyBot::Bot
   	return user_id + Time.now.strftime("%m/%d/%Y")
   end
   
-  match '/^(?<message>((\w* ?)*))$/' do |client, data, match|
+  match '/(?<message>.*)/' do |client, data, match|
     client.say(text: "Hello there, you said #{match[:message]}!", channel: data.channel)
     logger.info generate_session_id(data)
   end
