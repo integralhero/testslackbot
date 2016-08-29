@@ -13,6 +13,13 @@ def get_user_session(id)
 end
 
 client = Slack::RealTime::Client.new
+client.on :reaction_added do |data|
+	puts "Yay reaction recorded"
+	client.message channel: data['channel'], text: "reaction added"
+end
+
+# General Message handler
+# TODO: Currently generating unique session_id per call (per second). Not sure why, but I get low confidence back when I use an existing session and get no matches from Wit.ai
 client.on :message do |data|
 	if data['user'] != CHIMEBOT_ID
 		session_id = get_user_session(data['user'])
@@ -24,9 +31,14 @@ client.on :message do |data|
 		when "msg"
 			puts "Got a message"
 			client.message channel: data['channel'], text: "#{response["msg"]}"
+		when "action"
+			action = response["action"]
+		when "merge"
 		else
 			puts "None matched"
 			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with common queries"
+		end
+		if response.key?("quickreplies")
 		end
 		
 	end
