@@ -21,6 +21,7 @@ client.on :message do |data|
 		api_key_wit = ENV['WIT_API_TOKEN']
 		response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 		client.message channel: data['channel'], text: "#{response.to_s}" if DEBUG_MODE
+		puts response["type"]
 		case response["type"]
 		when "msg"
 			client.message channel: data['channel'], text: "#{response["msg"]}"
