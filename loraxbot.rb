@@ -25,7 +25,7 @@ client = Slack::RealTime::Client.new
 client.on :message do |data|
 	return if data['user'] == CHIMEBOT_ID
 	session_id = get_user_session(data['user'])
-	rsp = client.converse(session_id, 'what is the weather in London?', {})
+	rsp = wit_client.converse(session_id, 'what is the weather in London?', {})
 	puts("Yay, got Wit.ai response: #{rsp}")
 	client.message channel: data['channel'], text: "Hi <@#{data['user']}>!"
 end
