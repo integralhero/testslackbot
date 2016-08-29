@@ -8,7 +8,7 @@ actions = {
     	puts("sending... #{response['text']}")
   	}
 }
-
+puts "got wit token #{ENV['WIT_API_TOKEN']}"
 wit_client = Wit.new(access_token: ENV['WIT_API_TOKEN'], actions: actions)
 
 Slack.configure do |config|
