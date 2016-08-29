@@ -17,9 +17,9 @@ client = Slack::RealTime::Client.new
 client.on :message do |data|
 	return if data['user'] == CHIMEBOT_ID
 	session_id = get_user_session(data['user'])
-	puts data.inspect
+	puts data.text
 	response = HTTParty.post('https://api.wit.ai/converse?', :query => {:session_id => "#{session_id}", :q =>"How do I add money from a debit card?"}, :header => {"Authorization" => "Bearer #{ENV['WIT_API_WOKEN']}"})
 	puts response
-	client.message channel: data['channel'], text: "Hi <@#{data['user']}>!"
+	client.message channel: data['channel'], text: "Hi <@#{data['user']}>! You said: #{data.text}"
 end
 client.start!
