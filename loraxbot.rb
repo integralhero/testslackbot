@@ -10,7 +10,7 @@ end
 
 client = Slack::RealTime::Client.new
 client.on :message do |data|
-	return if data.user == "chimebot"
+	client.message channel: data['channel'], text: "#{data.user}"
 
 	client.message channel: data['channel'], text: "Hi <@#{data['user']}>!"
 end
