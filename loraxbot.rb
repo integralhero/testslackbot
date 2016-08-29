@@ -10,7 +10,8 @@ end
 
 client = Slack::RealTime::Client.new
 client.on :message do |data|
-	logger.info "This message is from: #{data.user}"
+	return if data.user == "chimebot"
+
 	client.message channel: data['channel'], text: "Hi <@#{data['user']}>!"
 end
 client.start!
