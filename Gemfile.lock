@@ -56,6 +56,7 @@ GEM
     websocket-driver (0.6.4)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
+    wit (4.1.0)
 
 PLATFORMS
   ruby
@@ -63,6 +64,7 @@ PLATFORMS
 DEPENDENCIES
   celluloid-io
   slack-ruby-client
+  wit
 
 BUNDLED WITH
    1.12.5
