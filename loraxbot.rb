@@ -19,7 +19,7 @@ client.on :message do |data|
 	session_id = get_user_session(data['user'])
 	puts data.text
 	timenow = Time.now.strftime("%Y%m%d")
-	response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => "#{session_id}", :q =>"#{data.text}", :access_token => "Bearer #{ENV['WIT_API_WOKEN']}" })
+	response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => "#{session_id}", :q =>"#{data.text}"}, :headers => {"Authorization" => "Bearer EQ5MQVUHXZ473HSKP3TRCLKDUSRC3C3D"})
 	client.message channel: data['channel'], text: "#{response.to_s}"
 	client.message channel: data['channel'], text: "Hi <@#{data['user']}>! You said: #{data.text}"
 end
