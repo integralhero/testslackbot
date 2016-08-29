@@ -1,6 +1,7 @@
 require 'slack-ruby-client'
 require 'logger'
 
+CHIMEBOT_ID = "U25FSAV6Y"
 
 logger = Logger.new(STDOUT)
 
@@ -10,7 +11,7 @@ end
 
 client = Slack::RealTime::Client.new
 client.on :message do |data|
-	client.message channel: data['channel'], text: "<#{data['user']}>"
+	return if data['user'] == CHIMEBOT_ID
 
 	client.message channel: data['channel'], text: "Hi <@#{data['user']}>!"
 end
