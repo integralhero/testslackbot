@@ -8,7 +8,7 @@ Slack.configure do |config|
 end
 
 def get_user_session(id)
-	date = Time.now.strftime("%m%d%Y")
+	date = Time.now.strftime("%m%d%Y%H%M%S")
 	return "#{id.to_s}#{date}"
 end
 
