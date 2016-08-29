@@ -7,8 +7,8 @@ class LoraxBot < SlackRubyBot::Bot
   	return user_id + Time.now.strftime("%m/%d/%Y")
   end
   
-  command '' do |client, data, match|
-    client.say(text: 'Hello there!', channel: data.channel)
+  match '/(?<message>((\w* ?)*))/' do |client, data, match|
+    client.say(text: "Hello there, you said #{match[:location]}!", channel: data.channel)
     logger.info generate_session_id(data)
   end
 end
