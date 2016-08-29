@@ -3,7 +3,11 @@ require 'wit'
 
 CHIMEBOT_ID = "U25FSAV6Y"
 
-actions = {}
+actions = {
+	send: -> (request, response) {
+    	puts("sending... #{response['text']}")
+  	}
+}
 
 wit_client = Wit.new(access_token: ENV['WIT_API_TOKEN'], actions: actions)
 
