@@ -1,15 +1,7 @@
 require 'slack-ruby-client'
-require 'wit'
-
+require "httparty"
 CHIMEBOT_ID = "U25FSAV6Y"
 
-actions = {
-	send: -> (request, response) {
-    	puts("sending... #{response['text']}")
-  	}
-}
-
-wit_client = Wit.new(access_token: ENV['WIT_API_TOKEN'], actions: actions)
 
 Slack.configure do |config|
   config.token = ENV['SLACK_API_TOKEN']
@@ -25,9 +17,8 @@ client = Slack::RealTime::Client.new
 client.on :message do |data|
 	return if data['user'] == CHIMEBOT_ID
 	session_id = get_user_session(data['user'])
-	rsp = wit_client.converse(session_id, 'what is the weather in London?', {})
 	puts data.inspect
-	puts("Yay, got Wit.ai response: #{rsp}")
+	response = HTTParty.post('https://api.wit.ai/converse?', body: {"session_id": "#{session_id}", "q": "How do I add money from a debit card?"}, headers: {"Authorization": "Bearer #{ENV['WIT_API_WOKEN']}"})
 	client.message channel: data['channel'], text: "Hi <@#{data['user']}>!"
 end
 client.start!
