@@ -13,9 +13,9 @@ def get_user_session(id)
 end
 
 client = Slack::RealTime::Client.new
+
 client.on :reaction_added do |data|
-	puts "Yay reaction recorded"
-	client.message channel: data['channel'], text: "reaction added"
+	puts "Reaction is added: #{data.inspect}"
 end
 
 # General Message handler
@@ -30,15 +30,17 @@ client.on :message do |data|
 		case response["type"]
 		when "msg"
 			puts "Got a message"
+			client.typing channel: data['channel']
 			client.message channel: data['channel'], text: "#{response["msg"]}"
 		when "action"
 			action = response["action"]
 		when "merge"
 		else
 			puts "None matched"
-			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with common queries"
+			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with some more common queries"
 		end
 		if response.key?("quickreplies")
+			puts response["quickreplies"]
 		end
 		
 	end
