@@ -12,6 +12,8 @@ def get_user_session(id)
 	return "#{id.to_s}#{date}"
 end
 
+nums = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten"}
+
 client = Slack::RealTime::Client.new
 
 client.on :reaction_added do |data|
@@ -43,6 +45,15 @@ client.on :message do |data|
 		end
 		if response.key?("quickreplies")
 			puts response["quickreplies"]
+			index = 1
+			message = "Please select one of the following options: "
+			for reply in response["quickreplies"] do
+				num_as_emoji = ":#{nums[index]}:"
+				option_str = "#{num_as_emoji} #{reply} "
+				message += option_str
+				index += 1
+			end
+			client.message channel: data['channel'], text: "#{message}"
 		end
 		
 	end
