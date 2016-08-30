@@ -55,7 +55,7 @@ client.on :message do |data|
 				emojis.push(num_as_emoji)
 				index += 1
 			end
-			client.chat_postMessage channel: data['channel'], text: "#{message}". as_user: true
+			client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
 
 			for i in 0...response["quickreplies"].size
 				# client.reactions_add(emojis[i])
