@@ -28,6 +28,7 @@ client.on :reaction_added do |data|
 		puts "#{data['user']} just added a #{reaction_name} to #{message_channel} at #{message_ts}"
 		text = "retrieve string: #{sessions[session_id][message_channel][message_ts][reaction_name]}"
 		puts text
+		
 		puts "#{sessions.inspect}"
 		client.message channel: data['item']['channel'], text: "Got a reaction: #{text}!" if DEBUG_MODE
 	end
