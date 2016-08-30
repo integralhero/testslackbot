@@ -29,7 +29,7 @@ client.on :message do |data|
 		timenow = Time.now.strftime("%Y%m%d")
 		api_key_wit = ENV['WIT_API_TOKEN']
 		response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
-		client.message channel: data['channel'], text: "#{response.to_s}" if DEBUG_MODE
+		# client.message channel: data['channel'], text: "#{response.to_s}" if DEBUG_MODE
 		puts "Response from WIT: #{response.inspect}"
 		case response["type"]
 		when "msg"
@@ -46,14 +46,21 @@ client.on :message do |data|
 		if response.key?("quickreplies")
 			puts response["quickreplies"]
 			index = 1
+			emojis = []
 			message = "Please select one of the following options: "
 			for reply in response["quickreplies"] do
 				num_as_emoji = ":#{nums[index]}:"
 				option_str = "#{num_as_emoji} #{reply} "
 				message += option_str
+				emojis.push(num_as_emoji)
 				index += 1
 			end
-			client.message channel: data['channel'], text: "#{message}"
+			option_reply = client.message channel: data['channel'], text: "#{message}"
+			puts "#{option_reply.inspect}"
+			for i in 0...response["quickreplies"].size
+				# client.reactions_add(emojis[i])
+			end
+			
 		end
 		
 	end
