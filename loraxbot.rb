@@ -58,6 +58,7 @@ client.on :message do |data|
 			chatbot_response = web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
 			puts "Chatbot response: #{chatbot_response.ts}"
 			for i in 0...response["quickreplies"].size
+				puts "add emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}"
 				web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
 			end
 			
