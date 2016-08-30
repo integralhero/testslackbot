@@ -13,7 +13,7 @@ def get_user_session(id)
 end
 
 nums = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
-
+web_client = Slack::Web::Client.new
 client = Slack::RealTime::Client.new
 
 client.on :reaction_added do |data|
@@ -55,7 +55,7 @@ client.on :message do |data|
 				emojis.push(num_as_emoji)
 				index += 1
 			end
-			client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
+			web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
 
 			for i in 0...response["quickreplies"].size
 				# client.reactions_add(emojis[i])
