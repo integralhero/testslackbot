@@ -1,7 +1,7 @@
 require 'slack-ruby-client'
 require "httparty"
 CHIMEBOT_ID = "U25FSAV6Y"
-DEBUG_MODE = false
+DEBUG_MODE = true
 
 Slack.configure do |config|
   config.token = ENV['SLACK_API_TOKEN']
@@ -16,7 +16,7 @@ client = Slack::RealTime::Client.new
 
 client.on :reaction_added do |data|
 	puts "Reaction is added: #{data.inspect}"
-	client.message channel: data['item']['channel'], text: "Got a reaction!"
+	client.message channel: data['item']['channel'], text: "Got a reaction: #{data['reaction']}!" if DEBUG_MODE
 end
 
 # General Message handler
