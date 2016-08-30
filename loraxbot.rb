@@ -16,6 +16,7 @@ client = Slack::RealTime::Client.new
 
 client.on :reaction_added do |data|
 	puts "Reaction is added: #{data.inspect}"
+	client.message channel: data['channel'], text: "Got a reaction!"
 end
 
 # General Message handler
