@@ -68,8 +68,9 @@ client.on :message do |data|
 			for i in 0...response["quickreplies"].size
 				reply_text = response["quickreplies"][i]
 				puts "add emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}"
-				sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
 				web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
+				sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
+				
 			end
 			
 		end
