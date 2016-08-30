@@ -15,10 +15,17 @@ end
 nums = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
 web_client = Slack::Web::Client.new
 client = Slack::RealTime::Client.new
-
+sessions = {}
 client.on :reaction_added do |data|
 	puts "Reaction is added: #{data.inspect}"
-	client.message channel: data['item']['channel'], text: "Got a reaction: #{data['reaction']}!" if DEBUG_MODE
+	if data['user'] != CHIMEBOT_ID
+		message_ts = data['item']['ts']
+		message_channel = data['item']['channel']
+		reaction_name = data['reactions']
+		puts "#{data['user']} just added a #{reaction_name} to #{message_channel} at #{message_ts}"
+		client.message channel: data['item']['channel'], text: "Got a reaction: #{data['reaction']}!" if DEBUG_MODE
+	end
+	
 end
 
 # General Message handler
@@ -26,6 +33,7 @@ end
 client.on :message do |data|
 	if data['user'] != CHIMEBOT_ID
 		session_id = get_user_session(data['user'])
+		sessions[session_id] = {}
 		timenow = Time.now.strftime("%Y%m%d")
 		api_key_wit = ENV['WIT_API_TOKEN']
 		response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
@@ -47,10 +55,10 @@ client.on :message do |data|
 			# puts response["quickreplies"]
 			index = 1
 			emojis = []
-			message = "Please select one of the following options: "
+			message = "Please select one of the following options for further inquiries: \n"
 			for reply in response["quickreplies"] do
 				num_as_emoji = ":#{nums[index]}:"
-				option_str = "#{num_as_emoji} #{reply} "
+				option_str = "#{num_as_emoji} #{reply} \n"
 				message += option_str
 				emojis.push("#{nums[index]}")
 				index += 1
@@ -58,7 +66,9 @@ client.on :message do |data|
 			chatbot_response = web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
 			puts "Chatbot response: #{chatbot_response.ts}"
 			for i in 0...response["quickreplies"].size
+				reply_text = response["quickreplies"][i]
 				puts "add emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}"
+				sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
 				web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
 			end
 			
