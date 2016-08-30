@@ -44,7 +44,7 @@ client.on :message do |data|
 			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with some more common queries"
 		end
 		if response.key?("quickreplies")
-			puts response["quickreplies"]
+			# puts response["quickreplies"]
 			index = 1
 			emojis = []
 			message = "Please select one of the following options: "
