@@ -52,7 +52,7 @@ client.on :message do |data|
 				num_as_emoji = ":#{nums[index]}:"
 				option_str = "#{num_as_emoji} #{reply} "
 				message += option_str
-				emojis.push(num_as_emoji)
+				emojis.push("#{nums[index]}")
 				index += 1
 			end
 			chatbot_response = web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
