@@ -16,7 +16,7 @@ client = Slack::RealTime::Client.new
 
 client.on :reaction_added do |data|
 	puts "Reaction is added: #{data.inspect}"
-	client.message channel: data['channel'], text: "Got a reaction!"
+	client.message channel: data['item']['channel'], text: "Got a reaction!"
 end
 
 # General Message handler
@@ -28,6 +28,7 @@ client.on :message do |data|
 		api_key_wit = ENV['WIT_API_TOKEN']
 		response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 		client.message channel: data['channel'], text: "#{response.to_s}" if DEBUG_MODE
+		puts "Response from WIT: #{response.inspect}"
 		case response["type"]
 		when "msg"
 			puts "Got a message"
