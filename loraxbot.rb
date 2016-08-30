@@ -56,6 +56,7 @@ client.on :message do |data|
 				index += 1
 			end
 			option_reply = client.message channel: data['channel'], text: "#{message}"
+			puts "Has option_reply message:"
 			puts "#{option_reply.inspect}"
 			for i in 0...response["quickreplies"].size
 				# client.reactions_add(emojis[i])
