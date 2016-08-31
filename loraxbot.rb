@@ -66,7 +66,7 @@ client.on :message do |data|
 			puts response.inspect
 		when "stop"
 			puts "go to stop"
-			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :context => ""}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
+			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => ""}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 			puts "GOT STOP: #{new_response.inspect}"
 		else
 			puts "None matched"
