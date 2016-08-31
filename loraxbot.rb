@@ -79,7 +79,6 @@ client.on :message do |data|
 			chatbot_response = web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
 			puts "Chatbot response: #{chatbot_response.ts}"
 			for i in 0...response["quickreplies"].size
-
 				#HACK: session_id is set to user_id, but this should not be the case once session storage/retrieval is figured out
 				session_id = data['user']
 				sessions[session_id] = {}
