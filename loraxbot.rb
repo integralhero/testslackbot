@@ -1,5 +1,7 @@
 require 'slack-ruby-client'
 require "httparty"
+require 'sinatra'
+
 CHIMEBOT_ID = "U25FSAV6Y"
 DEBUG_MODE = true
 
@@ -18,6 +20,10 @@ client = Slack::RealTime::Client.new
 sessions = {}
 actions = {}
 
+
+get '/' do
+	'Hello World!'
+end
 
 
 

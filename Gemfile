@@ -5,3 +5,4 @@ gem 'slack-ruby-client'
 gem 'wit'
 gem "httparty"
 gem 'eventmachine'
+gem 'sinatra'
