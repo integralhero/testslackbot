@@ -35,7 +35,6 @@ client.on :reaction_added do |data|
 		puts "#{data['user']} just added a #{reaction_name} to #{message_channel} at #{message_ts}"
 		text = "#{sessions[data['user']][message_channel][message_ts][reaction_name]}"
 		puts text
-		
 		client.message channel: data['item']['channel'], text: "User selected-> #{text}!" if DEBUG_MODE
 	end
 	
