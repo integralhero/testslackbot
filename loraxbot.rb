@@ -87,8 +87,8 @@ client.on :message do |data|
 				reply_text = response["quickreplies"][i]
 				puts "add emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}"
 				web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
-				sessions[session_id][chatbot_response.channel] = {} if !sessions[session_id].key? chatbot_response.channel
-				sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
+				sessions[session_id][chatbot_response.channel] = {} if !sessions[session_id].key? chatbot_response.channel && i == 0
+				sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if i == 0
 				sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
 				puts "SESSION PRINT: #{sessions.inspect}"
 			end
