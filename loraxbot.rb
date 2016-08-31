@@ -65,8 +65,9 @@ client.on :message do |data|
 			puts "BEGIN MERGE====="
 			puts response.inspect
 		when "stop"
+			puts "go to stop"
 			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :context => ""}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
-			"GOT STOP: #{new_response.inspect}"
+			puts "GOT STOP: #{new_response.inspect}"
 		else
 			puts "None matched"
 			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with some common queries"
