@@ -81,7 +81,7 @@ client.on :message do |data|
 			for i in 0...response["quickreplies"].size
 				#HACK: session_id is set to user_id, but this should not be the case once session storage/retrieval is figured out
 				session_id = data['user']
-				sessions[session_id] = {} if !session.key? session_id
+				sessions[session_id] = {} if !sessions.key? session_id
 				reply_text = response["quickreplies"][i]
 				puts "add emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}"
 				web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
