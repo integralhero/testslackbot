@@ -45,7 +45,7 @@ end
 client.on :message do |data|
 	if data['user'] != CHIMEBOT_ID
 		session_id = get_user_session(data['user'])
-		
+		client.typing channel: data['channel']
 		timenow = Time.now.strftime("%Y%m%d")
 		api_key_wit = ENV['WIT_API_TOKEN']
 		response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
@@ -53,8 +53,8 @@ client.on :message do |data|
 		puts "Response from WIT: #{response.inspect}"
 		case response["type"]
 		when "msg"
-			puts "Got a message"
-			client.typing channel: data['channel']
+			puts "Sending to client: #{response['msg']}"
+			
 			client.message channel: data['channel'], text: "#{response["msg"]}"
 		when "action"
 			action_name = response["action"]
