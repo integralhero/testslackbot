@@ -91,7 +91,7 @@ client.on :message do |data|
 				sessions[session_id][chatbot_response.channel] = {} if !sessions[session_id].key? chatbot_response.channel
 				sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
 				sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
-				
+				puts "SESSION PRINT: #{sessions.inspect}"
 			end
 			
 		end
