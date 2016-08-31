@@ -52,6 +52,7 @@ client.on :message do |data|
 		# client.message channel: data['channel'], text: "#{response.to_s}" if DEBUG_MODE
 		puts "USER MESSAGE: #{data['text']}"
 		puts "Response from WIT: #{response.inspect}"
+		puts "RESPONSE TYPE====== #{response['type']}"
 		case response["type"]
 		when "msg"
 			puts "Sending to client: #{response['msg']}"
