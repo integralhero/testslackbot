@@ -59,7 +59,8 @@ client.on :message do |data|
 		when "action"
 			action_name = response["action"]
 		when "merge"
-			#execute merge actions
+			puts "BEGIN MERGE====="
+			puts data.inspect
 		else
 			puts "None matched"
 			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with some common queries"
