@@ -58,9 +58,10 @@ client.on :message do |data|
 			client.message channel: data['channel'], text: "#{response["msg"]}"
 		when "action"
 			action_name = response["action"]
+			puts response.inspect
 		when "merge"
 			puts "BEGIN MERGE====="
-			puts data.inspect
+			puts response.inspect
 		else
 			puts "None matched"
 			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with some common queries"
