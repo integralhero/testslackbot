@@ -16,6 +16,11 @@ nums = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", 
 web_client = Slack::Web::Client.new
 client = Slack::RealTime::Client.new
 sessions = {}
+actions = {}
+
+
+
+
 client.on :reaction_added do |data|
 
 	puts "Reaction is added: #{data.inspect}"
@@ -28,10 +33,10 @@ client.on :reaction_added do |data|
 		puts "SESSIONS: #{sessions.inspect}"
 
 		puts "#{data['user']} just added a #{reaction_name} to #{message_channel} at #{message_ts}"
-		text = "retrieve string: #{sessions[data['user']][message_channel][message_ts][reaction_name]}"
+		text = "#{sessions[data['user']][message_channel][message_ts][reaction_name]}"
 		puts text
 		
-		client.message channel: data['item']['channel'], text: "Got a reaction: #{text}!" if DEBUG_MODE
+		client.message channel: data['item']['channel'], text: "User selected-> #{text}!" if DEBUG_MODE
 	end
 	
 end
@@ -53,11 +58,12 @@ client.on :message do |data|
 			client.typing channel: data['channel']
 			client.message channel: data['channel'], text: "#{response["msg"]}"
 		when "action"
-			action = response["action"]
+			action_name = response["action"]
 		when "merge"
+			#execute merge actions
 		else
 			puts "None matched"
-			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with some more common queries"
+			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with some common queries"
 		end
 		if response.key?("quickreplies")
 			# puts response["quickreplies"]
