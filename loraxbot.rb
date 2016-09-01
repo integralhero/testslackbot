@@ -1,8 +1,7 @@
 require 'slack-ruby-client'
 require "httparty"
 
-web_client = Slack::Web::Client.new
-client = Slack::RealTime::Client.new
+
 
 CHIMEBOT_ID = "U25FSAV6Y"
 DEBUG_MODE = true
@@ -15,6 +14,9 @@ actions = {}
 Slack.configure do |config|
   config.token = ENV['SLACK_API_TOKEN']
 end
+
+web_client = Slack::Web::Client.new
+client = Slack::RealTime::Client.new
 
 # get_user_session
 # PARAM: user_id from slack to generate session id for Wit
@@ -73,7 +75,7 @@ client.on :message do |data|
 		session_id = get_user_session(data['user'])
 		client.typing channel: data['channel']
 		
-		response = wit_converse(session_id, data.text)
+		response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 		# client.message channel: data['channel'], text: "#{response.to_s}" if DEBUG_MODE
 		puts "USER MESSAGE: #{data['text']}" if DEBUG_MODE
 		puts "Response from WIT: #{response.inspect}" if DEBUG_MODE
