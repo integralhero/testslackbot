@@ -7,7 +7,7 @@ CHIMEBOT_ID = "U25FSAV6Y"
 DEBUG_MODE = true
 
 nums = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
-sessions = {}
+$sessions = {}
 actions = {}
 
 
@@ -28,25 +28,25 @@ end
 # clear_session_context_for_user
 # PARAM: user_id from slack
 def clear_session_context_for_user(user_id)
-	if !sessions.key? user_id 
-		sessions[user_id] = {}
+	if !$sessions.key? user_id 
+		$sessions[user_id] = {}
 	end
-	sessions[user_id]["context"] = {}
+	$sessions[user_id]["context"] = {}
 end
 
 def get_context_for_user(user_id)
-	if !sessions.key? user_id
-		sessions[user_id] = {}
-		sessions[user_id]["context"] = {}
+	if !$sessions.key? user_id
+		$sessions[user_id] = {}
+		$sessions[user_id]["context"] = {}
 	else
-		if !sessions[user_id].key? "context"
-			sessions[user_id]["context"] = {}
+		if !$sessions[user_id].key? "context"
+			$sessions[user_id]["context"] = {}
 		end
 	end
-	return sessions[user_id]["context"]
+	return $sessions[user_id]["context"]
 end
 def set_context_for_user(user_id, entities)
-	return sessions[user_id]["context"] = entities
+	return $sessions[user_id]["context"] = entities
 end
 
 def wit_converse(session_id, q, context="")
@@ -67,10 +67,10 @@ client.on :reaction_added do |data|
 		message_ts = data['item']['ts']
 		message_channel = data['item']['channel']
 		reaction_name = data['reaction']
-		puts "SESSIONS: #{sessions.inspect}" if DEBUG_MODE
+		puts "$sessions: #{$sessions.inspect}" if DEBUG_MODE
 
 		puts "#{data['user']} just added a #{reaction_name} to #{message_channel} at #{message_ts}" if DEBUG_MODE
-		user_selected = "#{sessions[data['user']][message_channel][message_ts][reaction_name]}"
+		user_selected = "#{$sessions[data['user']][message_channel][message_ts][reaction_name]}"
 		puts user_selected if DEBUG_MODE
 		client.message channel: data['item']['channel'], text: "User selected-> #{user_selected}!" if DEBUG_MODE
 		puts "Retrieved user context: #{get_context_for_user(data.user)}"
@@ -135,14 +135,14 @@ client.on :message do |data|
 			chatbot_response = web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
 			puts "Chatbot response: #{chatbot_response.ts}"
 			for i in 0...response["quickreplies"].size
-				sessions[data.user] = {} if !sessions.key? session_id
+				$sessions[data.user] = {} if !$sessions.key? session_id
 				reply_text = response["quickreplies"][i] 
 				puts "Adding emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}" if DEBUG_MODE
 				web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
-				sessions[session_id][chatbot_response.channel] = {} if !sessions[session_id].key? chatbot_response.channel
-				sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
-				# puts "SESSION PRINT: #{sessions.inspect}" if DEBUG_MODE
-				sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
+				$sessions[session_id][chatbot_response.channel] = {} if !$sessions[session_id].key? chatbot_response.channel
+				$sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !$sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
+				# puts "SESSION PRINT: #{$sessions.inspect}" if DEBUG_MODE
+				$sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
 				
 			end
 			
