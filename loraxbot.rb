@@ -78,11 +78,12 @@ client.on :reaction_added do |data|
 		puts "Response from wit for reaction: #{wit_response.inspect}"
 		# TODO: message Wit with corresponding message selected (user_selected)
 
-		if wit_response["type"] == "msg"
-			client.typing channel: data['channel']g
+		case wit_response["type"]
+		when "msg"
+			client.typing channel: data['channel']
 			puts "Sending to client: #{response['msg']}" if DEBUG_MODE
 			client.message channel: data['channel'], text: "#{response["msg"]}"
-		elsif wit_response["type"] == "stop"
+		when"stop"
 			puts "go to stop" if DEBUG_MODE
 			api_key_wit = ENV['WIT_API_TOKEN']
 			clear_session_context_for_user(data.user)
