@@ -79,16 +79,18 @@ client.on :reaction_added do |data|
 		# TODO: message Wit with corresponding message selected (user_selected)
 
 		case wit_response["type"]
-		when "msg"
-			client.typing channel: data['channel']
-			puts "Sending to client: #{response['msg']}" if DEBUG_MODE
-			client.message channel: data['channel'], text: "#{response["msg"]}"
-		when"stop"
+		when "stop"
 			puts "go to stop" if DEBUG_MODE
 			api_key_wit = ENV['WIT_API_TOKEN']
 			clear_session_context_for_user(data.user)
 			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "g"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 			puts "GOT STOP: #{new_response.inspect}" if DEBUG_MODE
+
+			if new_response["type"] == "msg"
+				client.typing channel: message_channel
+				puts "Sending to client: #{response['msg']}" if DEBUG_MODE
+				client.message channel: message_channel, text: "#{response["msg"]}"
+			end
 		end
 
 
