@@ -41,7 +41,7 @@ end
 def wit_converse(session_id, q, context={})
 	api_key_wit = ENV['WIT_API_TOKEN']
 	timenow = Time.now.strftime("%Y%m%d")
-	response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{q}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
+	response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{q}", :context => ""}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 	return response
 end
 
