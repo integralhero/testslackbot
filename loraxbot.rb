@@ -96,6 +96,7 @@ client.on :message do |data|
 
 		# update user's context if we have something in the response
 		if response.key? "entities"
+			puts "Updated context #{response["entities"]} and retrieval #{get_context_for_user(data.user)}"
 			context = set_context_for_user(data.user, response["entities"])
 		end
 		case response["type"]
@@ -139,6 +140,7 @@ client.on :message do |data|
 				reply_text = response["quickreplies"][i] 
 				puts "Adding emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}" if DEBUG_MODE
 				web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
+				$sessions[session_id] = {} if !sessions.key? session_id
 				$sessions[session_id][chatbot_response.channel] = {} if !$sessions[session_id].key? chatbot_response.channel
 				$sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !$sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
 				# puts "SESSION PRINT: #{$sessions.inspect}" if DEBUG_MODE
