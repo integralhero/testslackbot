@@ -96,7 +96,7 @@ client.on :message do |data|
 
 		# update user's context if we have something in the response
 		if response.key? "entities"
-			context = set_context_for_user(data.user, response.entities)
+			context = set_context_for_user(data.user, response["entities"])
 		end
 		case response["type"]
 		when "msg"
