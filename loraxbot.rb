@@ -73,7 +73,9 @@ client.on :reaction_added do |data|
 		user_selected = "#{sessions[data['user']][message_channel][message_ts][reaction_name]}"
 		puts user_selected if DEBUG_MODE
 		client.message channel: data['item']['channel'], text: "User selected-> #{user_selected}!" if DEBUG_MODE
-
+		puts "Retrieved user context: #{get_context_for_user(data.user)}"
+		wit_response = wit_converse(data.user, user_selected, get_context_for_user(data.user))
+		puts "Response from wit for reaction: #{wit_response.inspect}"
 		# TODO: message Wit with corresponding message selected (user_selected)
 	end
 	
