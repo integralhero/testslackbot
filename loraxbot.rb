@@ -110,15 +110,15 @@ client.on :reaction_added do |data|
 					$sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
 					
 				end
-				
 			end
+		
 		when "stop"
-			puts "go to stop" if DEBUG_MODE
-			api_key_wit = ENV['WIT_API_TOKEN']
-			clear_session_context_for_user(data.user)
-			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "g"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
-			puts "GOT STOP: #{new_response.inspect}" if DEBUG_MODE
-			
+				puts "go to stop" if DEBUG_MODE
+				api_key_wit = ENV['WIT_API_TOKEN']
+				clear_session_context_for_user(data.user)
+				new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "g"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
+				puts "GOT STOP: #{new_response.inspect}" if DEBUG_MODE
+				
 		else
 		end
 	end
