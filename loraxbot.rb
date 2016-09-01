@@ -84,42 +84,41 @@ client.on :reaction_added do |data|
 			puts "Sending to client: #{response['msg']}" if DEBUG_MODE
 
 			client.message channel: data['channel'], text: "#{response["msg"]}"
-			if response.key?("quickreplies") 
-				# puts response["quickreplies"]
-				index = 1
-				emojis = []
-				message = "Please select one of the following options for further inquiries: \n"
-				for reply in response["quickreplies"] do
-					num_as_emoji = ":#{nums[index]}:"
-					option_str = "#{num_as_emoji} #{reply} \n"
-					message += option_str
-					emojis.push("#{nums[index]}")
-					index += 1
-				end
-				chatbot_response = web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
-				puts "Chatbot response: #{chatbot_response.ts}"
-				for i in 0...response["quickreplies"].size
-					session_id = data.user
-					reply_text = response["quickreplies"][i] 
-					puts "Adding emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}" if DEBUG_MODE
-					web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
-					$sessions[session_id] = {} if !$sessions.key? session_id
-					$sessions[session_id][chatbot_response.channel] = {} if !$sessions[session_id].key? chatbot_response.channel
-					$sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !$sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
-					# puts "SESSION PRINT: #{$sessions.inspect}" if DEBUG_MODE
-					$sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
-					
-				end
-			end
-		
 		when "stop"
-				puts "go to stop" if DEBUG_MODE
-				api_key_wit = ENV['WIT_API_TOKEN']
-				clear_session_context_for_user(data.user)
-				new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "g"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
-				puts "GOT STOP: #{new_response.inspect}" if DEBUG_MODE
+			puts "go to stop" if DEBUG_MODE
+			api_key_wit = ENV['WIT_API_TOKEN']
+			clear_session_context_for_user(data.user)
+			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "g"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
+			puts "GOT STOP: #{new_response.inspect}" if DEBUG_MODE
+		end
+
+
+		if response.key?("quickreplies") 
+			# puts response["quickreplies"]
+			index = 1
+			emojis = []
+			message = "Please select one of the following options for further inquiries: \n"
+			for reply in response["quickreplies"] do
+				num_as_emoji = ":#{nums[index]}:"
+				option_str = "#{num_as_emoji} #{reply} \n"
+				message += option_str
+				emojis.push("#{nums[index]}")
+				index += 1
+			end
+			chatbot_response = web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
+			puts "Chatbot response: #{chatbot_response.ts}"
+			for i in 0...response["quickreplies"].size
+				session_id = data.user
+				reply_text = response["quickreplies"][i] 
+				puts "Adding emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}" if DEBUG_MODE
+				web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
+				$sessions[session_id] = {} if !$sessions.key? session_id
+				$sessions[session_id][chatbot_response.channel] = {} if !$sessions[session_id].key? chatbot_response.channel
+				$sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !$sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
+				# puts "SESSION PRINT: #{$sessions.inspect}" if DEBUG_MODE
+				$sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
 				
-		else
+			end
 		end
 	end
 	
