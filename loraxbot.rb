@@ -82,8 +82,8 @@ client.on :reaction_added do |data|
 		case wit_response["type"]
 		when "msg"
 			client.typing channel: message_channel
-			puts "Sending to client: #{response['msg']}" if DEBUG_MODE
-			client.message channel: message_channel, text: "#{response["msg"]}"
+			puts "Sending to client: #{result_response['msg']}" if DEBUG_MODE
+			client.message channel: message_channel, text: "#{result_response["msg"]}"
 		when "stop"
 			puts "go to stop" if DEBUG_MODE
 			api_key_wit = ENV['WIT_API_TOKEN']
@@ -93,8 +93,8 @@ client.on :reaction_added do |data|
 			result_response = new_response
 			if result_response["type"] == "msg"
 				client.typing channel: message_channel
-				puts "Sending to client: #{response['msg']}" if DEBUG_MODE
-				client.message channel: message_channel, text: "#{response["msg"]}"
+				puts "Sending to client: #{result_response['msg']}" if DEBUG_MODE
+				client.message channel: message_channel, text: "#{result_response["msg"]}"
 			end
 		end
 		
