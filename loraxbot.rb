@@ -74,7 +74,8 @@ client.on :message do |data|
 	if data['user'] != CHIMEBOT_ID
 		session_id = get_user_session(data['user'])
 		client.typing channel: data['channel']
-		
+		api_key_wit = ENV['WIT_API_TOKEN']
+		timenow = Time.now.strftime("%Y%m%d")
 		response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => ""}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 		# client.message channel: data['channel'], text: "#{response.to_s}" if DEBUG_MODE
 		puts "USER MESSAGE: #{data['text']}" if DEBUG_MODE
