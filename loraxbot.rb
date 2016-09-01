@@ -79,11 +79,11 @@ client.on :reaction_added do |data|
 		# TODO: message Wit with corresponding message selected (user_selected)
 
 		case wit_response["type"]
-		when "stop"
-			puts "go to stop" if DEBUG_MODE
-			clear_session_context_for_user(data.user)
-			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "g"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
-			puts "GOT STOP: #{new_response.inspect}" if DEBUG_MODE
+		when "msg"
+			client.typing channel: data['channel']
+			puts "Sending to client: #{response['msg']}" if DEBUG_MODE
+
+			client.message channel: data['channel'], text: "#{response["msg"]}"
 			if response.key?("quickreplies") 
 				# puts response["quickreplies"]
 				index = 1
@@ -112,6 +112,12 @@ client.on :reaction_added do |data|
 				end
 				
 			end
+		when "stop"
+			puts "go to stop" if DEBUG_MODE
+			clear_session_context_for_user(data.user)
+			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "g"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
+			puts "GOT STOP: #{new_response.inspect}" if DEBUG_MODE
+			
 		else
 		end
 	end
