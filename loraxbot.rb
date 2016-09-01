@@ -41,7 +41,7 @@ end
 def wit_converse(session_id, q, context={})
 	api_key_wit = ENV['WIT_API_TOKEN']
 	timenow = Time.now.strftime("%Y%m%d")
-	response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{q}", :context => ""}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
+	response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{q}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 	return response
 end
 
@@ -75,7 +75,7 @@ client.on :message do |data|
 		session_id = get_user_session(data['user'])
 		client.typing channel: data['channel']
 		
-		response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
+		response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => ""}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 		# client.message channel: data['channel'], text: "#{response.to_s}" if DEBUG_MODE
 		puts "USER MESSAGE: #{data['text']}" if DEBUG_MODE
 		puts "Response from WIT: #{response.inspect}" if DEBUG_MODE
