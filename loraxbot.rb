@@ -133,6 +133,7 @@ client.on :reaction_added do |data|
 
 			gotMessage = false
 			while !gotMessage
+				context = get_context_for_user(data["user"])
 				new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 				puts "new response: #{new_response.inspect}" if DEBUG_MODE
 				if new_response["type"] == "msg"
@@ -162,7 +163,7 @@ client.on :message do |data|
 	if data['user'] != CHIMEBOT_ID
 		session_id = get_user_session(data['user'])
 		client.typing channel: data['channel']
-		context = get_context_for_user(data.user)
+		
 
 		response = wit_converse(session_id, data.text, "#{context}")
 		# client.message channel: data['channel'], text: "#{response.to_s}" if DEBUG_MODE
@@ -189,14 +190,13 @@ client.on :message do |data|
 
 			gotMessage = false
 			while !gotMessage
+				context = get_context_for_user(data.user)
 				new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 				puts "new response: #{new_response.inspect}" if DEBUG_MODE
 				if new_response["type"] == "msg"
 					gotMessage = true 
 					response = new_response
 				end
-
-				
 			end
 			
 			client.typing channel: data['channel']
