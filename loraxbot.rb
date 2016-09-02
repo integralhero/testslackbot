@@ -180,6 +180,7 @@ client.on :message do |data|
 			puts response.inspect if DEBUG_MODE
 		# bot thinks convo has stopped, so flush the context and restart flow
 		when "stop"
+			api_key_wit = ENV['WIT_API_TOKEN']
 			puts "go to stop" if DEBUG_MODE
 			clear_session_context_for_user(data.user)
 			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
