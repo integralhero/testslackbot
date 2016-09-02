@@ -15,7 +15,7 @@ Slack.configure do |config|
   config.token = ENV['SLACK_API_TOKEN']
 end
 
-web_client = Slack::Web::Client.new
+$web_client = Slack::Web::Client.new
 client = Slack::RealTime::Client.new
 
 # get_user_session
@@ -68,13 +68,13 @@ def post_quickreplies(quickreplies, data)
 		emojis.push("#{$nums[index]}")
 		index += 1
 	end
-	chatbot_response = web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
+	chatbot_response = $web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
 	puts "Chatbot result_response: #{chatbot_response.ts}"
 	for i in 0...quickreplies.size
 		session_id = data.user
 		reply_text = quickreplies[i] 
 		puts "Adding emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}" if DEBUG_MODE
-		web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
+		$web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
 		$sessions[session_id] = {} if !$sessions.key? session_id
 		$sessions[session_id][chatbot_response.channel] = {} if !$sessions[session_id].key? chatbot_response.channel
 		$sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !$sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
@@ -212,13 +212,13 @@ client.on :message do |data|
 		# 		emojis.push("#{nums[index]}")
 		# 		index += 1
 		# 	end
-		# 	chatbot_response = web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
+		# 	chatbot_response = $web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
 		# 	puts "Chatbot response: #{chatbot_response.ts}"
 		# 	for i in 0...response["quickreplies"].size
 		# 		session_id = data.user
 		# 		reply_text = response["quickreplies"][i] 
 		# 		puts "Adding emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}" if DEBUG_MODE
-		# 		web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
+		# 		$web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
 		# 		$sessions[session_id] = {} if !$sessions.key? session_id
 		# 		$sessions[session_id][chatbot_response.channel] = {} if !$sessions[session_id].key? chatbot_response.channel
 		# 		$sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !$sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
