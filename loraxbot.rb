@@ -213,7 +213,7 @@ client.on :message do |data|
 		end
 
 		# handles responses with quickreplies on Wit by displaying a selection list with emoji reactions
-		post_quickreplies(response["quickreplies"], data)
+		post_quickreplies(response["quickreplies"], data) if response.key? "quickreplies"
 
 	end
 end
