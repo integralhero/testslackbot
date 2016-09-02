@@ -69,6 +69,8 @@ def post_quickreplies(quickreplies, data)
 		index += 1
 	end
 	puts "===========DATA===============> #{data.inspect}"
+	channel = data['channel']
+	channel = data['item']['channel'] if !channel
 	chatbot_response = $web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
 	puts "Chatbot result_response: #{chatbot_response.ts}"
 	for i in 0...quickreplies.size
