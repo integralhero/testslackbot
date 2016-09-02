@@ -109,7 +109,7 @@ client.on :reaction_added do |data|
 		# user_selected has the text corresponding to the user's chosen option
 		user_selected = "#{$sessions[data['user']][message_channel][message_ts][reaction_name]}"
 		puts user_selected if DEBUG_MODE
-		client.message channel: data['item']['channel'], text: "User selected-> #{user_selected}!" if DEBUG_MODE
+		# client.message channel: data['item']['channel'], text: "User selected-> #{user_selected}!" if DEBUG_MODE
 		puts "Retrieved user context: #{get_context_for_user(data.user)}"
 
 		# message Wit with the user's response
