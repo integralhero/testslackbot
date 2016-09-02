@@ -186,6 +186,11 @@ client.on :message do |data|
 			clear_session_context_for_user(data.user)
 			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 			puts "GOT STOP: #{new_response.inspect}" if DEBUG_MODE
+			if new_response["type"] == "msg"
+				client.typing channel: message_channel
+				puts "Sending to client: #{new_response['msg']}" if DEBUG_MODE
+				client.message channel: message_channel, text: "#{new_response["msg"]}"
+			end
 		else
 			puts "None matched" if DEBUG_MODE
 			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with some common queries"
