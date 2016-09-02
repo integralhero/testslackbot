@@ -98,8 +98,9 @@ client.on :reaction_added do |data|
 		puts "$sessions: #{$sessions.inspect}" if DEBUG_MODE
 
 		puts "#{data['user']} just added a #{reaction_name} to #{message_channel} at #{message_ts}" if DEBUG_MODE
-		if !$sessions.key? data['user'] || !$sessions[data['user']].key? message_channel || !$sessions[data['user']][message_channel].key? message_ts || !$sessions[data['user']][message_channel][message_ts].key? reaction_name
+		if !$sessions.key?(data['user']) || !$sessions[data['user']].key?(message_channel) || !$sessions[data['user']][message_channel].key?(message_ts) || !$sessions[data['user']][message_channel][message_ts].key?(reaction_name)
 			#handler just to be safe (in case sessions wasn't saved correctly, or a reaction was added that wasn't on the list of options)
+			puts "Error in reaction handler"
 		end
 
 		# user_selected has the text corresponding to the user's chosen option
