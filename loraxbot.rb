@@ -179,6 +179,7 @@ client.on :message do |data|
 		if response.key? "entities"
 			puts "Updated context #{response["entities"]} and retrieval #{get_context_for_user(data.user)}"
 			context = set_context_for_user(data.user, response["entities"])
+			puts "Context after update: #{get_context_for_user(data.user)}"
 		end
 		case response["type"]
 		when "msg"
