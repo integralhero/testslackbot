@@ -144,10 +144,11 @@ client.on :reaction_added do |data|
 					result_response = new_response
 				end
 			end
-			
-			client.typing channel: data['channel']
+			channel_send = data['channel']
+			channel_send = data['item']['channel'] if !channel_send
+			client.typing channel: channel_send
 			puts "Sending to client: #{new_response['msg']}" if DEBUG_MODE
-			client.message channel: data['channel'], text: "#{new_response["msg"]}"
+			client.message channel: channel_send, text: "#{new_response["msg"]}"
 		end
 		
 		if result_response.key?("quickreplies") 
