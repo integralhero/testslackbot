@@ -68,6 +68,7 @@ def post_quickreplies(quickreplies, data)
 		emojis.push("#{$nums[index]}")
 		index += 1
 	end
+	puts "===========DATA===============> #{data.inspect}"
 	chatbot_response = $web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
 	puts "Chatbot result_response: #{chatbot_response.ts}"
 	for i in 0...quickreplies.size
