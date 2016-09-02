@@ -139,6 +139,7 @@ client.on :reaction_added do |data|
 				context = get_context_for_user(data["user"])
 				new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 				puts "new response: #{new_response.inspect}" if DEBUG_MODE
+				set_context_for_user(data.user, new_response["entities"]) if new_response.key? "entities"
 				if new_response["type"] == "msg"
 					gotMessage = true 
 					result_response = new_response
@@ -196,6 +197,7 @@ client.on :message do |data|
 			while !gotMessage
 				new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
 				puts "new response: #{new_response.inspect}" if DEBUG_MODE
+				set_context_for_user(data.user, new_response["entities"]) if new_response.key? "entities"
 				if new_response["type"] == "msg"
 					gotMessage = true 
 					response = new_response
