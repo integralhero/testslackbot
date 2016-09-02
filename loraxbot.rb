@@ -6,7 +6,7 @@ require "httparty"
 CHIMEBOT_ID = "U25FSAV6Y"
 DEBUG_MODE = true
 
-nums = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
+$nums = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
 $sessions = {}
 actions = {}
 
@@ -62,10 +62,10 @@ def post_quickreplies(quickreplies, data)
 	emojis = []
 	message = "Please select one of the following options for further inquiries: \n"
 	for reply in quickreplies do
-		num_as_emoji = ":#{nums[index]}:"
+		num_as_emoji = ":#{$nums[index]}:"
 		option_str = "#{num_as_emoji} #{reply} \n"
 		message += option_str
-		emojis.push("#{nums[index]}")
+		emojis.push("#{$nums[index]}")
 		index += 1
 	end
 	chatbot_response = web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
