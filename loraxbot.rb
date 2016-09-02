@@ -180,6 +180,7 @@ client.on :message do |data|
 			puts response.inspect if DEBUG_MODE
 		# bot thinks convo has stopped, so flush the context and restart flow
 		when "stop"
+			puts response["type"]
 			api_key_wit = ENV['WIT_API_TOKEN']
 			puts "go to stop" if DEBUG_MODE
 			clear_session_context_for_user(data.user)
