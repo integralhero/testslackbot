@@ -130,14 +130,20 @@ client.on :reaction_added do |data|
 			puts "go to stop" if DEBUG_MODE
 			api_key_wit = ENV['WIT_API_TOKEN']
 			# clear_session_context_for_user(data.user) <- should we clear context here?
-			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{get_context_for_user(data.user)}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
-			puts "Stop inside reaction handler: #{new_response.inspect}" if DEBUG_MODE
-			result_response = new_response
-			if result_response["type"] == "msg"
-				client.typing channel: message_channel
-				puts "Sending to client: #{result_response['msg']}" if DEBUG_MODE
-				client.message channel: message_channel, text: "#{result_response["msg"]}"
+
+			gotMessage = false
+			while !gotMessage
+				new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
+				puts "new response: #{new_response.inspect}" if DEBUG_MODE
+				if new_response["type"] == "msg"
+					gotMessage = true 
+					result_response = new_response
+				end
 			end
+			
+			client.typing channel: data['channel']
+			puts "Sending to client: #{new_response['msg']}" if DEBUG_MODE
+			client.message channel: data['channel'], text: "#{new_response["msg"]}"
 		end
 		
 		if result_response.key?("quickreplies") 
@@ -175,60 +181,35 @@ client.on :message do |data|
 		when "action"
 			action_name = response["action"]
 			puts response.inspect if DEBUG_MODE
-		when "merge"
-			puts "got to merge"
-			puts response.inspect if DEBUG_MODE
-		# bot thinks convo has stopped, so flush the context and restart flow
 		when "stop"
 			puts response["type"]
 			api_key_wit = ENV['WIT_API_TOKEN']
 			puts "go to stop" if DEBUG_MODE
-			clear_session_context_for_user(data.user)
-			new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
-			puts "GOT STOP: #{new_response.inspect}" if DEBUG_MODE
-			if new_response["type"] == "msg"
-				response = new_response
-				client.typing channel: data['channel']
-				puts "Sending to client: #{new_response['msg']}" if DEBUG_MODE
-				client.message channel: data['channel'], text: "#{new_response["msg"]}"
+			# clear_session_context_for_user(data.user)
+
+			gotMessage = false
+			while !gotMessage
+				new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{context}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
+				puts "new response: #{new_response.inspect}" if DEBUG_MODE
+				if new_response["type"] == "msg"
+					gotMessage = true 
+					response = new_response
+				end
+
+				
 			end
+			
+			client.typing channel: data['channel']
+			puts "Sending to client: #{new_response['msg']}" if DEBUG_MODE
+			client.message channel: data['channel'], text: "#{new_response["msg"]}"
 		else
 			puts "None matched" if DEBUG_MODE
 			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with some common queries"
 		end
 
-
-		post_quickreplies(response["quickreplies"], data)
 		# handles responses with quickreplies on Wit by displaying a selection list with emoji reactions
-		# if response.key?("quickreplies") 
-		# 	# puts response["quickreplies"]
-		# 	index = 1
-		# 	emojis = []
-		# 	message = "Please select one of the following options for further inquiries: \n"
-		# 	for reply in response["quickreplies"] do
-		# 		num_as_emoji = ":#{nums[index]}:"
-		# 		option_str = "#{num_as_emoji} #{reply} \n"
-		# 		message += option_str
-		# 		emojis.push("#{nums[index]}")
-		# 		index += 1
-		# 	end
-		# 	chatbot_response = $web_client.chat_postMessage channel: data['channel'], text: "#{message}", as_user: true
-		# 	puts "Chatbot response: #{chatbot_response.ts}"
-		# 	for i in 0...response["quickreplies"].size
-		# 		session_id = data.user
-		# 		reply_text = response["quickreplies"][i] 
-		# 		puts "Adding emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}" if DEBUG_MODE
-		# 		$web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
-		# 		$sessions[session_id] = {} if !$sessions.key? session_id
-		# 		$sessions[session_id][chatbot_response.channel] = {} if !$sessions[session_id].key? chatbot_response.channel
-		# 		$sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !$sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
-		# 		# puts "SESSION PRINT: #{$sessions.inspect}" if DEBUG_MODE
-		# 		$sessions[session_id][chatbot_response.channel][chatbot_response.ts][emojis[i]] = reply_text
-				
-		# 	end
-			
-		# end
-		
+		post_quickreplies(response["quickreplies"], data)
+
 	end
 end
 client.start!
