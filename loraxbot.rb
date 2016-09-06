@@ -27,6 +27,7 @@ end
 
 # clear_session_context_for_user
 # PARAM: user_id from slack
+# clears session context for user_id if it exists, otherwise it gets created
 def clear_session_context_for_user(user_id)
 	if !$sessions.key? user_id 
 		$sessions[user_id] = {}
@@ -34,6 +35,9 @@ def clear_session_context_for_user(user_id)
 	$sessions[user_id]["context"] = {}
 end
 
+# get_context_for_user
+# PARAM: user_id from slack
+# retrieves context from sessions object for user_id
 def get_context_for_user(user_id)
 	if !$sessions.key? user_id
 		$sessions[user_id] = {}
@@ -45,10 +49,20 @@ def get_context_for_user(user_id)
 	end
 	return $sessions[user_id]["context"]
 end
+
+# set_context_for_user
+# PARAM: user_id from slack
+# sets context in sessions object for user_id
 def set_context_for_user(user_id, entities)
 	return $sessions[user_id]["context"] = entities
 end
 
+# wit_converse
+# PARAMS:
+# => session_id: session_id corresponding to this conversation
+# => q: text query from user
+# => context: current conversation context 
+# sets context in sessions object for user_id
 def wit_converse(session_id, q, context="")
 	api_key_wit = ENV['WIT_API_TOKEN']
 	timenow = Time.now.strftime("%Y%m%d")
@@ -56,8 +70,11 @@ def wit_converse(session_id, q, context="")
 	return response
 end
 
+# post_quickreplies
+# PARAMS:
+# => quickreplies: response['quickreplies'] in response from Wit call; array of options 
+# => data: data obj containing user/channel info (for sending the quickreply message and adding emojis)
 def post_quickreplies(quickreplies, data)
-	# puts response["quickreplies"]
 	index = 1
 	emojis = []
 	message = "Please select one of the following options for further inquiries: \n"
@@ -118,12 +135,6 @@ client.on :reaction_added do |data|
 		set_context_for_user(data.user, wit_response["entities"]) if wit_response.key? "entities"
 		result_response = wit_response
 
-		# should probably loop this part and break on a stop?
-		# reached_stop = false
-
-		# while !reached_stop
-		# end
-
 		case wit_response["type"]
 		when "msg"
 			client.typing channel: message_channel
@@ -135,6 +146,8 @@ client.on :reaction_added do |data|
 			# clear_session_context_for_user(data.user) <- should we clear context here?
 
 			gotMessage = false
+
+			# keep sending and receiving Wit response until we get a 'msg' response we can send to the user
 			while !gotMessage
 				context = get_context_for_user(data["user"])
 				new_response = HTTParty.post('https://api.wit.ai/converse?', :query => {:v => '#{timenow}',:session_id => session_id, :q =>"#{data.text}", :context => "#{get_context_for_user(data['user'])}"}, :headers => {"Authorization" => "Bearer #{api_key_wit}"})
@@ -163,7 +176,8 @@ client.on :reaction_added do |data|
 end
 
 # General Message handler
-# TODO: Currently generating unique session_id per call (per second). Not sure why, but I get low confidence back when I use an existing session and get no matches from Wit.ai
+# TODO: Currently generating unique session_id per call (per second), need to fix that? - see 'get_user_session'
+# WIT requires passing a session_id token per 'conversation' that we generate
 client.on :message do |data|
 	if data['user'] != CHIMEBOT_ID
 		session_id = get_user_session(data['user'])
@@ -171,7 +185,6 @@ client.on :message do |data|
 		context = get_context_for_user(data.user)
 
 		response = wit_converse(session_id, data.text, "#{context}")
-		# client.message channel: data['channel'], text: "#{response.to_s}" if DEBUG_MODE
 		puts "USER MESSAGE: #{data['text']}" if DEBUG_MODE
 		puts "Response from WIT: #{response.inspect}" if DEBUG_MODE
 
@@ -192,7 +205,7 @@ client.on :message do |data|
 			puts response["type"]
 			api_key_wit = ENV['WIT_API_TOKEN']
 			puts "go to stop" if DEBUG_MODE
-			# clear_session_context_for_user(data.user)
+
 			set_context_for_user(data.user, response["entities"]) if response.key? "entities"
 			gotMessage = false
 			while !gotMessage
@@ -204,12 +217,15 @@ client.on :message do |data|
 					gotMessage = true 
 					response = new_response
 				end
+				# should probably reset context when we get a 'stop'; moot point now because I'm overwriting context with set_context_for_user
 			end
 			
+
 			client.typing channel: data['channel']
 			puts "Sending to client: #{new_response['msg']}" if DEBUG_MODE
 			client.message channel: data['channel'], text: "#{new_response["msg"]}"
 		else
+			# This shouldn't ever be called (if we handle all the response types that can come back from Wit)
 			puts "None matched" if DEBUG_MODE
 			client.message channel: data['channel'], text: "Hi <@#{data['user']}>! Your command was not recognized. Try testing me with some common queries"
 		end
