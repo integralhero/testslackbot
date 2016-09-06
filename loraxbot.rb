@@ -85,7 +85,8 @@ def post_quickreplies(quickreplies, data)
 		emojis.push("#{$nums[index]}")
 		index += 1
 	end
-	puts "===========DATA===============> #{data.inspect}"
+
+	# sometimes we're getting 'data' from RTM API and not web, and the data for channel info lives in a different place
 	channel_send = data['channel']
 	channel_send = data['item']['channel'] if !channel_send
 	chatbot_response = $web_client.chat_postMessage channel: channel_send, text: "#{message}", as_user: true
@@ -95,6 +96,10 @@ def post_quickreplies(quickreplies, data)
 		reply_text = quickreplies[i] 
 		puts "Adding emoji: #{emojis[i]} on #{chatbot_response.channel} at #{chatbot_response.ts}" if DEBUG_MODE
 		$web_client.reactions_add(name: emojis[i], channel: chatbot_response.channel, timestamp: chatbot_response.ts)
+
+		# store info about the message with reaction emojis we just sent by setting something in the sessions obj
+		# hashed by: $sessions[session_id][chatbot_response.channel][chatbot_response.ts] 
+		# session_id here is just user_id from slack
 		$sessions[session_id] = {} if !$sessions.key? session_id
 		$sessions[session_id][chatbot_response.channel] = {} if !$sessions[session_id].key? chatbot_response.channel
 		$sessions[session_id][chatbot_response.channel][chatbot_response.ts] = {} if !$sessions[session_id][chatbot_response.channel].key? chatbot_response.ts
